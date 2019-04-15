@@ -1,0 +1,42 @@
+{{>header}}
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col">
+                {{mostrar}}
+            </div>
+        </div>
+        <div class="row">
+            <h2>Editar notas</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form action="/editarnotas" method="POST">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{nombre}}">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="nota1">Nota1</label>
+                            <input type="text" class="form-control" id="nota1" name="matematicas" value="{{matematicas}}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="nota2">Nota2</label>
+                            <input type="number" class="form-control" id="nota2" name="ingles" value="{{ingles}}">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="nota3">Nota3</label>
+                            <input type="number" class="form-control" id="nota3" name="programacion" value="{{programacion}}">
+                        </div>
+                    </div>
+                    
+                    <div class="row d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{{>footer}}

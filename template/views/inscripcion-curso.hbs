@@ -1,0 +1,47 @@
+{{>header}}
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col">
+                {{{validarInscripcionAspirante respuesta}}}
+            </div>
+        </div>
+        <div class="ror">
+            <h2>Formulario para inscribirse en un curso</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form action="/inscripcioncurso" method="POST">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="documentoidentidad">Documento de identidad</label>
+                            <input type="text" class="form-control" id="documentoidentidad" name="nroDocumento" value="{{nroDocumento}}" readonly>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="correoaspirante">Correo electronico</label>
+                            <input type="email" class="form-control" id="correoaspirante" name="correo" value="{{correo}}" readonly>
+                        </div>
+                    </div>
+                    <div class="row"> 
+                        <div class="form-group col-md-6">
+                            <label for="nombreaspirante">Nombre</label>
+                            <input type="text" class="form-control" id="nombreaspirante" name="nombre" value="{{nombre}}" readonly>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="telefonoaspirante">Telefono</label>
+                            <input type="number" class="form-control" id="telefonoaspirante" name="telefonoaspirante" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="modalidadcurso">Cursos disponibles</label>
+                            {{{selectHtmlCursosDisponibles listado}}}
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{{>footer}}

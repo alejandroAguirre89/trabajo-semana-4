@@ -1,0 +1,56 @@
+{{>header}}
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col">
+                {{#if respuesta}}
+                {{else}}
+                    <div class="alert alert-warning" role="alert">
+                        <p>Este curso ya se encuentra registrado</p>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+        <div class="ror">
+            <h2>Formulario para crear un curso</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form action="/crearcurso" method="POST">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="nombrecurso">nombre</label>
+                            <input type="text" class="form-control" id="nombrecurso" name="nombrecurso" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="modalidadcurso">modalidad</label>
+                            <select class="form-control" id="modalidadcurso" name="modalidadcurso">
+                                <option value="">Selecciona modalidad...</option>
+                                <option value="virtual">Virtual</option>
+                                <option value="presencial">Presencial</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row"> 
+                        <div class="form-group col-md-6">
+                            <label for="valorcurso">valor</label>
+                            <input type="number" class="form-control" id="valorcurso" name="valorcurso" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="descripcioncurso">Descripción</label>
+                            <textarea class="form-control" id="descripcioncurso" name="descripcioncurso" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="intensidadhorariacurso">Intensidad horaria</label>
+                            <input type="number" class="form-control" id="intensidadhorariacurso" name="intensidadhorariacurso">
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{{>footer}}

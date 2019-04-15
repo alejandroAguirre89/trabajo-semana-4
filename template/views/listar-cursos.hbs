@@ -1,0 +1,31 @@
+{{>header}}
+<div class="container mt-2">
+    <div class="row">
+        <div class="col">
+            <h2>Ver cursos como administrador</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{#if respuesta}}
+            <div class="alert alert-success" role="alert">
+                <p>Curso creado exitosamente.</p>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{{listarCursos listado}}}
+        </div>
+    </div>
+    {{!-- <div class="row">
+        <div class="col">
+            <h2>Ver cursos como interesado</h2>
+        </div>
+    </div>
+    <div class="row">
+        {{{detalleCursos}}}
+    </div> --}}
+</div>
+{{>footer}}

@@ -1,0 +1,73 @@
+{{>header}}
+<div class="container mt-2">
+    <div class="row">
+        <div class="col">
+            <div class="jumbotron">
+                <h1 class="display-4">Bienvenido</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <b>{{mostrar}}</b>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-7">
+            <h3>Registrar usuario</h3>
+            <form action="/registro" method="post">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="nroDocumento">Documento</label>
+                        <input type="text" class="form-control" id="nroDocumento" name="nroDocumento">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="correo">Correo</label>
+                        <input type="email" class="form-control" id="correo" name="correo">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="contrasena">Contraseña</label>
+                        <input type="password" class="form-control" id="contrasena" name="contrasena">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Crear usuario</button>
+            </form>
+        </div>
+        <div class="col-5">
+            {{#if sessionAspirante}}
+
+            <form class="form-group" action="/salir" method="GET">
+                <button type="submit" class="btn btn-danger mb-2">Salir</button>
+            </form>
+            {{else}}   
+
+                {{#if sessionCoordinador}}
+                <form class="form-group" action="/salir" method="GET">
+                    <button type="submit" class="btn btn-danger mb-2">Salir</button>
+                </form>   
+                 {{else}}     
+                <h3>Iniciar sesión</h3>
+                <form class="form-group" action="/identificarse" method="POST">
+                    <div class="form-group">
+                        <label for="correo">Correo</label>
+                        <input type="email" class="form-control" id="correo" name="correo">
+                    </div>
+                    <div class="form-group">
+                        <label for="contrasena">Contraseña</label>
+                        <input type="password" class="form-control" id="contrasena" name="contrasena">
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2">Confirmar identidad</button>
+                </form>
+                {{/if}}
+            {{/if}}
+        </div>
+    </div>
+</div>
+{{>footer}}

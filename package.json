@@ -1,0 +1,25 @@
+{
+  "name": "semana-3",
+  "version": "1.0.1",
+  "description": "Unidad de la semana 3",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alejandro Aguirre jn.alejandro77@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.5",
+    "body-parser": "^1.18.3",
+    "bootstrap": "^4.3.1",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "hbs": "^4.0.3",
+    "jquery": "^3.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.4.23",
+    "mongoose-unique-validator": "^2.0.2",
+    "node-localstorage": "^1.3.1",
+    "popper.js": "^1.15.0"
+  }
+}
