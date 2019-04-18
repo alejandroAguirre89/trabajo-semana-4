@@ -6,8 +6,11 @@ const Curso      = require('../models/cursos')
 const Aspirante  = require('./../models/aspirantes')
 const AspiranteCurso  = require('./../models/aspirantes-curso')
 const bcrypt = require('bcrypt')
+const multer  = require('multer')
 
 app.set('view engine', 'hbs');
+
+const upload = multer({ dest: 'uploads/' })
 
 const dirViews    = path.join(__dirname,'../../template/views');
 const dirPartials = path.join(__dirname, '../../template/partials');
@@ -19,7 +22,7 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.post('/registro', (req,res) => {
+app.post('/registro', upload.single('fotoPerfil'), (req,res) => {
     let aspirante = new Aspirante({
         nroDocumento: req.body.nroDocumento,
         nombre: req.body.nombre,
