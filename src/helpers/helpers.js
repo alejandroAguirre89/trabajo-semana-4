@@ -1,6 +1,7 @@
 const hbs = require('hbs');
 
 hbs.registerHelper('listarCursos', (listado) =>{
+
     listaCursos = listado
     let texto = "<table class='table table-striped'>"+
                 "<thead>"+
@@ -10,17 +11,32 @@ hbs.registerHelper('listarCursos', (listado) =>{
                 "<th> Modalidad </th>"+
                 "<th> Intensidad </th>"+
                 "<th> Estado </th>"+
+                "<th> Cambiar Estado </th>"+
                 "</thead>"+
                 "</tbody>";
 
     listaCursos.forEach(curso => {
+
+        boton = "";
+
+        boton = boton + "<form action='/cambiarEstadoCurso' method='POST'>"+
+                        "<input type='hidden' name='id' value='"+curso._id+"'>";
+
+        if(curso.estado == 'disponible')
+            boton = boton + "<button type='submit' class='btn btn-outline-danger' name='estado' value='cerrado'>Cerrado</button>";
+        else
+            boton = boton + "<button type='submit' class='btn btn-outline-success' name='estado' value='disponible'>Disponible</button>";
+        
+        boton = boton + "</form>";
+
         texto = texto + "<tr>"+
                         "<td>"+curso.nombre +"</td>" +
                         "<td>"+curso.descripcion +"</td>" +
                         "<td>"+curso.valor +"</td>" +
                         "<td>"+curso.modalidad +"</td>" +
                         "<td>"+curso.intensidadHoraria +"</td>" +
-                        "<td>"+curso.estado +"</td>" +
+                        "<td>"+curso.estado  +"</td>" +
+                        "<td>"+boton +"</td>" +
                         "</tr>";
     });
 
@@ -106,4 +122,60 @@ hbs.registerHelper('validarInscripcionAspirante', (resultadoInscripcionAspirante
     }
     else
         return "";
+});
+
+hbs.registerHelper('validarSesionNoIniciada', (sesion) =>{
+
+    return !sesion ? true : false;
+});
+
+hbs.registerHelper('verCursosInscrito', (listado) =>{
+    listaCursos = listado
+    let texto = "";
+
+    if(listado.length == 0)
+    {
+        texto = "<div class='alert alert-warning' role='alert'>"+
+                    "<p>El aspirante no esta registrado en nigun curso.</p>"+
+                "</div>";
+    }
+    else
+    {
+        listaCursos.forEach(curso => {
+
+            texto = texto + "<div class='col-md-4'>"+
+                                "<div id='accordion'>"+
+                                    "<div class='card'>"+
+                                        "<div class='card-header' id='headingTwo'>"+
+                                            "<h5 class='mb-0'>"+
+                                                "<button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseTwo"+curso._id +"'"+
+                                                    "aria-expanded='false' aria-controls='collapseTwo"+curso._id +"'>"+
+                                                    "<strong>"+ curso.nombre +"</strong>"+
+                                                "</button>"+
+                                            "</h5>"+
+                                        "</div>"+
+                                        "<div id='collapseTwo"+curso._id +"' class='collapse' aria-labelledby='headingTwo' data-parent='#accordion'>"+
+                                            "<div class='card-body'>"+
+                                                "<ul>"+
+                                                    "<li><strong>Id: </strong>"+curso._id +"</li>"+
+                                                    "<li><strong>Nombre: </strong>"+curso.nombre +"</li>"+
+                                                    "<li><strong>Modalidad: </strong>"+curso.modalidad +"</li>"+
+                                                    "<li><strong>Valor: </strong>"+curso.valor +"</li>"+
+                                                    "<li><strong>Descripción: </strong>"+curso.descripcion +"</li>"+
+                                                    "<li><strong>Intensidad horaria: </strong>"+curso.intensidadhoraria +"</li>"+
+                                                    "<li><strong>Estado: </strong>"+curso.estado +"</li>"+
+                                                "</ul>"+
+                                                "<form action='/cancelarcurso' method='POST'>" +
+                                                "<input type='hidden' name='idCurso' value='"+curso._id +"'>"+
+                                                "<button class='btn btn-outline-danger'>Cancelar curso</button>"+
+                                                "</form>"+
+                                            "</div>"+
+                                        "</div>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>";
+        });
+    }
+
+    return texto;
 });

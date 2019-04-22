@@ -7,10 +7,11 @@ const Aspirante  = require('./../models/aspirantes')
 const AspiranteCurso  = require('./../models/aspirantes-curso')
 const bcrypt = require('bcrypt')
 const multer  = require('multer')
+const funciones = require('../funciones/funciones');
 
 app.set('view engine', 'hbs');
 
-const upload = multer({ dest: 'uploads/' })
+//var upload = multer({ dest: 'uploads/' })
 
 const dirViews    = path.join(__dirname,'../../template/views');
 const dirPartials = path.join(__dirname, '../../template/partials');
@@ -19,8 +20,48 @@ app.set('views', dirViews)
 hbs.registerPartials(dirPartials)
 
 app.get('/', (req, res) => {
-    res.render('index');
+    if(req.session.sessionActiva)
+    {
+        funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+            
+            let avatar = ''
+
+            if(aspirante.avatar)
+                avatar = aspirante.avatar.toString('base64') 
+
+            res.render('index', {
+                tituloPagina: 'Inicio',
+                nombre: req.session.nombre,
+                mostrar: req.session.nombre,
+                // variables de sesion
+                sessionActiva:      req.session.sessionActiva,
+                sessionAspirante:   req.session.sessionAspirante,
+                sessionCoordinador: req.session.sessionCoordinador,
+                nombre: req.session.nombre,
+                avatar: avatar,
+            });
+        })
+
+    }
+    else
+    {
+        res.render('index'),{
+            tituloPagina: 'Inicio',
+        };
+    }
 });
+
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, 'public/uploads')
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, req.body.nroDocumento+ '-' +file.originalname)
+//     }
+// })
+ 
+//var upload = multer({ storage: storage })
+var upload = multer({})
 
 app.post('/registro', upload.single('fotoPerfil'), (req,res) => {
     let aspirante = new Aspirante({
@@ -28,6 +69,7 @@ app.post('/registro', upload.single('fotoPerfil'), (req,res) => {
         nombre: req.body.nombre,
         correo: req.body.correo,
         contrasena: bcrypt.hashSync(req.body.contrasena, 10),
+        avatar: req.file.buffer,
         rol: 'aspirante'
     })
     
@@ -42,16 +84,21 @@ app.post('/registro', upload.single('fotoPerfil'), (req,res) => {
         // variables de sesión
         req.session.usuario = result
         req.session.nombre  = result.nombre
+        req.session.sessionActiva        = true
         req.session.sessionAspirante     = true
-        req.session.sessionCoordinador   = false
-        console.log(req.session)
+        req.session.sessionCoordinador   = false,
+        avatar = result.avatar.toString('base64')
 
         res.render('index', {
-            mostrar: 'Bienvenido: '+req.session.nombre,
+            tituloPagina: 'Inicio',
+            nombre: req.session.nombre,
+            mostrar: req.session.nombre,
             // variables de sesion
+            sessionActiva:      req.session.sessionActiva,
             sessionAspirante:   req.session.sessionAspirante,
             sessionCoordinador: req.session.sessionCoordinador,
-            nombre: req.session.nombre
+            nombre: req.session.nombre,
+            avatar: avatar
         });
     })
 });
@@ -83,6 +130,11 @@ app.post('/identificarse', (req,res) => {
         // variables de sesión
         req.session.usuario = result
         req.session.nombre  = result.nombre
+        req.session.sessionActiva = true
+
+        let avatar = '';
+        if(result.avatar)
+            avatar = result.avatar.toString('base64')
 
         switch (result.rol) {
             case 'coordinador':
@@ -94,11 +146,15 @@ app.post('/identificarse', (req,res) => {
         }
 
         res.render('index', {
-            mostrar: 'Bienvenido: '+result.nombre,
+            tituloPagina: 'Inicio',
+            nombre: req.session.nombre,
+            mostrar: result.nombre,
             // variables de sesion
+            sessionActiva:      req.session.sessionActiva,
             sessionAspirante:   req.session.sessionAspirante,
             sessionCoordinador: req.session.sessionCoordinador,
-            nombre: req.session.nombre
+            nombre: req.session.nombre,
+            avatar: avatar
         });
     })
 });
@@ -120,8 +176,36 @@ app.get('/listarcursos', (req, res) => {
             return console.log(err);
 
         res.render('listar-cursos', {
+            tituloPagina: 'Lista de cursos',
             listado: resp,
         });
+    })
+});
+
+app.post('/cambiarEstadoCurso', (req,res) =>{
+
+    console.log(req.body);
+
+    Curso.findOneAndUpdate({_id: req.body.id}, req.body, {new: true, runValidators: true, context: 'query' } ,(err, result) =>{
+        
+        let mostrar = 'Estado del curso actualizado exitosamente'
+
+        if(err)
+            mostrar = err
+        
+        if(result == null)
+            mostrar = 'No se encontro el curso'
+
+        Curso.find({}).exec((err, resp) => {
+            if(err)
+                return console.log(err);
+    
+            res.render('listar-cursos', {
+                mostrar: mostrar,
+                tituloPagina: 'Lista de cursos',
+                listado: resp,
+            });
+        })
     })
 });
 
@@ -131,14 +215,26 @@ app.get('/vercursos', (req, res) => {
         if(err)
             return console.log(err);
 
-        res.render('ver-cursos', {
-            listado: resp,
-        });
+        funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+
+            let avatar = ''
+
+            if(aspirante.avatar)
+                avatar = aspirante.avatar.toString('base64') 
+
+            res.render('ver-cursos', {
+                tituloPagina: 'Ver cursos',
+                nombre: req.session.nombre,
+                avatar: avatar,
+                listado: resp
+            })
+        })
     })
 });
 
 app.get('/crearcurso', (req,res) =>{
     res.render('crear-curso', {
+        tituloPagina: 'Crear curso',
         respuesta: true,
     });
 });
@@ -167,16 +263,26 @@ app.post('/crearcurso', (req,res) =>{
 
 app.get('/inscripcioncurso', (req,res) =>{
 
-    Curso.find({estado: 'disponible'}).exec((err, resp) => {
+    Curso.find({estado: 'disponible'}).exec((err, listado) => {
         if(err)
             return console.log(err);
 
-        res.render('inscripcion-curso', {
-            listado: resp,
-            nroDocumento: req.session.usuario.nroDocumento,
-            nombre: req.session.usuario.nombre,
-            correo: req.session.usuario.correo,
-        });
+        funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+
+            let avatar = ''
+
+            if(aspirante.avatar)
+                avatar = aspirante.avatar.toString('base64') 
+
+            res.render('inscripcion-curso', {
+                tituloPagina: 'Incripción en curso',
+                listado: listado,
+                nroDocumento: req.session.usuario.nroDocumento,
+                nombre: req.session.usuario.nombre,
+                correo: req.session.usuario.correo,
+                avatar: avatar,
+            })
+        })
     });
 });
 
@@ -187,45 +293,133 @@ app.post('/inscripcioncurso', (req,res) =>{
         nombre:         req.session.usuario.nombre,
         correo:         req.session.usuario.correo,
         telefono:       req.body.telefonoaspirante,
-        idApirante:     req.session.usuario._id,
+        idAspirante:     req.session.usuario._id,
         idCurso:        req.body.curso
     })
-    
-    aspiranteCurso.save((err, respuesta) => {       
+
+    AspiranteCurso.findOne({idAspirante: req.session.usuario._id, idCurso: req.body.curso }).exec((err, result) => {
+        
+        let resp = true
 
         if(err)
+            resp = false
+
+        if(result != null)
         {
-            Curso.find({estado: 'disponible'}).exec((err, resp) => {
+            Curso.find({estado: 'disponible'}).exec((err, listado) => {
+
                 if(err)
-                    return console.log(err);
+                    console.log(err)
+                
+                funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+    
+                    let avatar = ''
         
-                res.render('inscripcion-curso', {
-                    respuesta: false,
-                    listado: resp,
-                    nroDocumento: req.session.usuario.nroDocumento,
-                    nombre: req.session.usuario.nombre,
-                    correo: req.session.usuario.correo,
+                    if(aspirante.avatar)
+                        avatar = aspirante.avatar.toString('base64') 
+    
+                    res.render('inscripcion-curso', {
+                        tituloPagina: 'Incripción en curso',
+                        respuesta: false,
+                        listado: listado,
+                        nroDocumento: req.session.usuario.nroDocumento,
+                        nombre: req.session.usuario.nombre,
+                        correo: req.session.usuario.correo,
+                        avatar: avatar
+                    })
                 })
             })
         }
+        else
+        {
+            aspiranteCurso.save((err, respuesta) => {  
+        
+                let resp = true
+        
+                if(err)
+                {
+                    resp = false
+                    console.log(err)
+                }
+        
+                Curso.find({estado: 'disponible'}).exec((err, listado) => {
+                    if(err)
+                        return console.log(err);
+            
+                    funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+        
+                        let avatar = ''
+            
+                        if(aspirante.avatar)
+                            avatar = aspirante.avatar.toString('base64') 
+        
+                        res.render('inscripcion-curso', {
+                            tituloPagina: 'Incripción en curso',
+                            respuesta: resp,
+                            listado: listado,
+                            nroDocumento: req.session.usuario.nroDocumento,
+                            nombre: req.session.usuario.nombre,
+                            correo: req.session.usuario.correo,
+                            avatar: avatar
+                        })
+                    })
+                })
+            })
+        }
+    })
+});
 
-        Curso.find({estado: 'disponible'}).exec((err, resp) => {
+app.get('/vercursosinscritos', (req, res) => {
+
+    AspiranteCurso.find({idAspirante: req.session.usuario._id}).exec((err, listaCursosApirante) => {
+        if(err)
+            return console.log(err);
+
+        let arrayIdCursosInscritos = []
+
+        listaCursosApirante.forEach(function(cursoApirante) {
+            arrayIdCursosInscritos.push(cursoApirante.idCurso);
+        })   
+
+        Curso.find({_id: arrayIdCursosInscritos}).exec((err, listadoCursosInscritos) => {
+            
             if(err)
                 return console.log(err);
-    
-            res.render('inscripcion-curso', {
-                respuesta: true,
-                listado: resp,
-                nroDocumento: req.session.usuario.nroDocumento,
-                nombre: req.session.usuario.nombre,
-                correo: req.session.usuario.correo,
+
+            funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+
+                let avatar = ''
+
+                if(aspirante.avatar)
+                    avatar = aspirante.avatar.toString('base64') 
+
+                res.render('ver-cursos-inscritos', {
+                    tituloPagina: 'Ver cursos',
+                    nombre: req.session.nombre,
+                    avatar: avatar,
+                    listado: listadoCursosInscritos
+                })
             })
         })
     })
 });
 
+app.post('/cancelarcurso', (req,res) =>{
 
-
+    AspiranteCurso.findOneAndDelete({idCurso: req.body.idCurso, idAspirante: req.session.usuario._id}, req.body, (err, result) =>{
+        if(err)
+            console.log(err)
+        
+        if(!result)
+            mostrar = 'No se encontro el curso del estudiante a cancelar'
+        
+        else 
+        {
+            return res.redirect('/vercursosinscritos');
+        }
+    })
+});
+ 
 
 
 
@@ -268,8 +462,6 @@ app.post('/registrarnotas', (req,res) =>{
         })
     })
 });
-
-
 
 app.get('/editarnotas', (req, res) => {
 

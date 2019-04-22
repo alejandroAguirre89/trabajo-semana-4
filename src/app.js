@@ -29,16 +29,15 @@ app.use(session({
 //middleware
 app.use((req, resp, next) => {
 
-    console.log(req.session);
     if(req.session.sessionCoordinador || req.session.sessionAspirante )
     {
-        resp.locals.session = true
         resp.locals.usuario = req.session.usuario
         resp.locals.nombre  = req.session.nombre
+        resp.locals.sessionActiva        = req.session.sessionActiva
         resp.locals.sessionCoordinador   = req.session.sessionCoordinador
         resp.locals.sessionAspirante     = req.session.sessionAspirante
     }
-    
+
     next()
 })
 

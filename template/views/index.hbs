@@ -3,74 +3,51 @@
     <div class="row">
         <div class="col">
             <div class="jumbotron">
-                <h1 class="display-4">Bienvenido</h1>
+                {{#if (validarSesionNoIniciada sessionActiva)}}
+                    <h1 class="display-4">Bienvenido</h1>
+                {{else}}  
+                    <h1>Bienvenido {{mostrar}}</h1>
+                {{/if}}
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <b>{{mostrar}}</b>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-7">
+            {{#if (validarSesionNoIniciada sessionActiva)}}
             <h3>Registrar usuario</h3>
             <form action="/registro" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="nroDocumento">Documento</label>
-                        <input type="text" class="form-control" id="nroDocumento" name="nroDocumento">
+                        <input type="text" class="form-control" id="nroDocumento" name="nroDocumento" required>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="nombre">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre">
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="correo">Correo</label>
-                        <input type="email" class="form-control" id="correo" name="correo">
+                        <input type="email" class="form-control" id="correo" name="correo" required>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="contrasena">Contraseña</label>
-                        <input type="password" class="form-control" id="contrasena" name="contrasena">
+                        <input type="password" class="form-control" id="contrasena" name="contrasena" required>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <input type="file" name="fotoPerfil" class="form-control">
+                    <div class="col-md-6">
+                        <div class="custom-file">
+                            <input type="file" name="fotoPerfil" class="custom-file-input">
+                            <label class="custom-file-label" for="customFile">Subir foto de perfil</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-outline-primary">Crear usuario</button>
                     </div>
                 </div>
-
-                <button type="submit" class="btn btn-primary">Crear usuario</button>
             </form>
-        </div>
-        <div class="col-5">
-            {{#if sessionAspirante}}
-
-            <form class="form-group" action="/salir" method="GET">
-                <button type="submit" class="btn btn-danger mb-2">Salir</button>
-            </form>
-            {{else}}   
-
-                {{#if sessionCoordinador}}
-                <form class="form-group" action="/salir" method="GET">
-                    <button type="submit" class="btn btn-danger mb-2">Salir</button>
-                </form>   
-                 {{else}}     
-                <h3>Iniciar sesión</h3>
-                <form class="form-group" action="/identificarse" method="POST">
-                    <div class="form-group">
-                        <label for="correo">Correo</label>
-                        <input type="email" class="form-control" id="correo" name="correo">
-                    </div>
-                    <div class="form-group">
-                        <label for="contrasena">Contraseña</label>
-                        <input type="password" class="form-control" id="contrasena" name="contrasena">
-                    </div>
-                    <button type="submit" class="btn btn-primary mb-2">Confirmar identidad</button>
-                </form>
-                {{/if}}
             {{/if}}
         </div>
     </div>

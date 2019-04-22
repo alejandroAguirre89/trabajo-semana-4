@@ -5,22 +5,25 @@ var uniqueValidator = require('mongoose-unique-validator');
 const aspiranteSchema = new Schema({
     nroDocumento:{
         type: String,
-        unique: true,
-        required: true
+        unique: [true, 'Este número de documento ya se encuentra registrado'],
+        required: [true, 'El número de documento es requerido']
     },
     nombre:{
         type: String,
-        required: true,
+        required: [true, 'El nombre es requerido'],
         trim: true
     },
     correo:{
         type: String,
-        unique: true,
-        required: true
+        unique: [true, 'Este correo electronico ya se encuentra registrado'],
+        required: [true, 'El correo electronico es requerido'],
     },
     contrasena:{
         type: String,
-        required: true
+        required: [true, 'La contraseña es requerida'],
+    },
+    avatar: {
+        type: Buffer
     },
     rol:{
         type: String,

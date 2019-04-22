@@ -5,27 +5,25 @@ var uniqueValidator = require('mongoose-unique-validator');
 const aspiranteCursoSchema = new Schema({
     nroDocumento:{
         type: String,
-        unique: true,
         required: true
     },
     nombre:{
         type: String,
-        required: true,
-        trim: true
+        trim: true,
+        required: true
     },
     correo:{
         type: String,
-        unique: true,
         required: true
     },
     telefono:{
         type: Number,
-        unique: true,
         required: true
     },    
-    idApirante:{
+    idAspirante:{
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     idCurso:{
         type: String,

@@ -5,49 +5,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>{{tituloPagina}}</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css"  type="text/css">
 </head>
-<header>
-    <p>Bienvenido a esta aplicación web</p>
-</header>
 
 <body>
-    <div class="container">
+    <div class="container pt-3">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="/">Inicio</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            {{#if sessionAspirante}}
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/vercursos">Ver cursos</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/inscripcioncurso">Inscribir</a>
-                    </li>
-                </ul>
-            </div>
-            {{/if}}
+                    {{#if sessionAspirante}}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/vercursos">Ver cursos disponibles</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/inscripcioncurso">Inscribir</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/vercursosinscritos">Ver cursos inscritos</a>
+                        </li>
+                    {{/if}}
 
-            {{#if sessionCoordinador}}
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/crearcurso">Crear curso</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/listarcursos">Ver cursos</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Ver inscritos</a>
-                    </li>
+                    {{#if sessionCoordinador}}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/crearcurso">Crear curso</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/listarcursos">Ver cursos</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Ver inscritos</a>
+                        </li>
+                    {{/if}}
                 </ul>
+                {{#if (validarSesionNoIniciada sessionActiva)}}
+                    <form class="form-inline my-2 my-lg-0" action="/identificarse" method="POST">
+                        <label class="mr-sm-2">Ingreso</label>
+                        <input class="form-control mr-sm-2" type="email" placeholder="Email" id="correo" name="correo">
+                        <input class="form-control mr-sm-2" type="password" placeholder="Contraseña" id="contrasena" name="contrasena">
+                        <button type="submit" class="btn btn-outline-primary my-2 my-sm-0">Ingresar</button>
+                    </form>
+                {{else}} 
+                    <form class="orm-inline my-2 my-lg-0" action="/salir" method="GET">
+                        <img src="data:image/png;base64,{{avatar}}" alt="fotoPerfil" style="width: 30px; height: auto">
+                        <span>{{nombre}}</span>
+                        <button type="submit" class="btn btn-outline-danger my-2 my-sm-0">Salir</button>
+                    </form>
+                {{/if}}
             </div>
-            {{/if}}
         </nav>
     </div>

@@ -1,8 +1,16 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(function() {
+            $(".custom-file-input").on("change", function() {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            });
+        });
+    </script>
 </body>
-<footer>
-    <p>Todos los derechos reservados</p>
+<footer class="d-flex justify-content-center">
+    <p class="pt-3">Todos los derechos reservados</p>
 </footer>
 </html>
