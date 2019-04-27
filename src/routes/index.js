@@ -22,7 +22,7 @@ hbs.registerPartials(dirPartials)
 app.get('/', (req, res) => {
     if(req.session.sessionActiva)
     {
-        funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+        funciones.buscarAspirantePorEmail(req.session.usuario.correo, function (aspirante){
             
             let avatar = ''
 
@@ -215,7 +215,7 @@ app.get('/vercursos', (req, res) => {
         if(err)
             return console.log(err);
 
-        funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+        funciones.buscarAspirantePorEmail(req.session.usuario.correo, function (aspirante){
 
             let avatar = ''
 
@@ -223,7 +223,7 @@ app.get('/vercursos', (req, res) => {
                 avatar = aspirante.avatar.toString('base64') 
 
             res.render('ver-cursos', {
-                tituloPagina: 'Ver cursos',
+                tituloPagina: 'Ver cursos disponibles',
                 nombre: req.session.nombre,
                 avatar: avatar,
                 listado: resp
@@ -267,7 +267,7 @@ app.get('/inscripcioncurso', (req,res) =>{
         if(err)
             return console.log(err);
 
-        funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+        funciones.buscarAspirantePorEmail(req.session.usuario.correo, function (aspirante){
 
             let avatar = ''
 
@@ -311,7 +311,7 @@ app.post('/inscripcioncurso', (req,res) =>{
                 if(err)
                     console.log(err)
                 
-                funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+                funciones.buscarAspirantePorEmail(req.session.usuario.correo, function (aspirante){
     
                     let avatar = ''
         
@@ -346,7 +346,7 @@ app.post('/inscripcioncurso', (req,res) =>{
                     if(err)
                         return console.log(err);
             
-                    funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+                    funciones.buscarAspirantePorEmail(req.session.usuario.correo, function (aspirante){
         
                         let avatar = ''
             
@@ -386,7 +386,7 @@ app.get('/vercursosinscritos', (req, res) => {
             if(err)
                 return console.log(err);
 
-            funciones.buscarApirantePorEmail(req.session.usuario.correo, function (aspirante){
+            funciones.buscarAspirantePorEmail(req.session.usuario.correo, function (aspirante){
 
                 let avatar = ''
 
@@ -394,7 +394,7 @@ app.get('/vercursosinscritos', (req, res) => {
                     avatar = aspirante.avatar.toString('base64') 
 
                 res.render('ver-cursos-inscritos', {
-                    tituloPagina: 'Ver cursos',
+                    tituloPagina: 'Ver cursos inscritos',
                     nombre: req.session.nombre,
                     avatar: avatar,
                     listado: listadoCursosInscritos
@@ -419,140 +419,64 @@ app.post('/cancelarcurso', (req,res) =>{
         }
     })
 });
- 
 
+app.get('/listaraspirantesinscritos', (req, res) => {
 
+    funciones.obtenerApirantesPorCurso(function (listadoCursos){
 
-
-
-
-
-
-
-
-app.get('/registrarnotas', (req, res) => {
-
-    console.log(req.session);
-    console.log(req.session.usuario);
-
-    res.render('registrar-notas-est', {
-        mostrar: '',
-    });
-});
-
-app.post('/registrarnotas', (req,res) =>{
-    let estudiante = new Estudiante({
-        nombre: req.body.nombre,
-        contrasena: bcrypt.hashSync(req.body.contrasena, 10),
-        matematicas: req.body.nota1,
-        ingles: req.body.nota2,
-        programacion: req.body.nota3
-    })
-
-    estudiante.save((err, result) =>{
-        if(err)
-        {
-            res.render('registrar-notas-est', {
-                mostrar: err,
-            })
-        }
-
-        res.render('registrar-notas-est', {
-            mostrar: result,
+        res.render('listar-inscritos', {
+            tituloPagina: 'Ver aspirantes inscritos',
+            respuesta: 0,
+            listadoCursos: listadoCursos,
         })
     })
 });
 
-app.get('/editarnotas', (req, res) => {
+app.post('/eliminarAspiranteCurso', (req,res) =>{
 
-    // busqueda con variable de sesión
-    //Estudiante.findById(req.session.usuario,  (err, estudiante) => {
-    
-    // busqueda con token
-    console.log(req.usuario);
-    Estudiante.findById(req.usuario,  (err, estudiante) => {
-    
+    AspiranteCurso.findOneAndDelete({idCurso: req.body.idCurso, idAspirante: req.body.idAspirante}, req.body, (err, result) =>{
         if(err)
-            return console.log(err);
-
-        if(!estudiante)
-        {
-            console.log('No se encontro estudiante');
-            return res.redirect('/');
-        }
-
-        res.render('editar-notas-est', {
-            nombre: estudiante.nombre,
-            matematicas: estudiante.matematicas,
-            ingles: estudiante.ingles,
-            programacion: estudiante.programacion
-        });
-    });
-});
-
-app.post('/editarnotas', (req,res) =>{
-
-    Estudiante.findOneAndUpdate({nombre: req.body.nombre}, req.body, {new: true, runValidators: true, context: 'query' } ,(err, result) =>{
-        if(err)
-        {
-            res.render('editar-notas-est', {
-                mostrar: err
-            })
-        }
-        else if(result == null)
-        {
-            console.log('resultado');
-            console.log(result);
-
-            res.render('editar-notas-est', {
-                mostrar: 'No se encontro el estudiante'
-            })
-        }
-        else 
-        {
-            res.render('editar-notas-est', {
-                mostrar: 'Notas del estudiante actualizadas exitosamente',
-                nombre: result.nombre,
-                matematicas: result.matematicas,
-                ingles: result.ingles,
-                programacion: result.programacion
-            })
-        }
-    })
-});
-
-app.post('/eliminarnotas', (req,res) =>{
-
-    Estudiante.findOneAndDelete({nombre: req.body.nombre}, req.body, (err, result) =>{
-        if(err)
-        {
-            res.render('listar-notas-est', {
-                mostrar: err
-            })
-        }
-        else if(!result)
-        {
-            res.render('listar-notas-est', {
-                mostrar: 'No se encontro el estudiante'
-            })
-        }
-        else 
-        {
-            console.log(result);
-
-            Estudiante.find({}).exec((err, resp) => {
-                if(err)
-                    return console.log(err);
+            console.log(err)
         
-                res.render('listar-notas-est', {
-                    mostrar: 'Operación exitosa, se elimino '+result.nombre,
-                    listado: resp,
-                });
-            });
-        }
+        if(!result)
+            console.log('No se encontro el curso del estudiante a cancelar')
+        
+        return res.redirect('/listaraspirantesinscritos');
     })
 });
- 
+
+app.get('/salachat', (req, res) => {
+    if(req.session.sessionActiva)
+    {
+        funciones.buscarAspirantePorEmail(req.session.usuario.correo, function (aspirante){
+            
+            let avatar = ''
+
+            if(aspirante.avatar)
+                avatar = aspirante.avatar.toString('base64') 
+
+            res.render('sala-chat', {
+                tituloPagina: 'Sala de chat',
+                nombre: req.session.nombre,
+                mostrar: req.session.nombre,
+                // variables de sesion
+                sessionActiva:      req.session.sessionActiva,
+                sessionAspirante:   req.session.sessionAspirante,
+                sessionCoordinador: req.session.sessionCoordinador,
+                nombre: req.session.nombre,
+                avatar: avatar,
+            });
+        })
+
+    }
+    else
+    {
+        res.render('sala-chat'),{
+            tituloPagina: 'Sala de chat',
+        };
+    }
+});
+  
 app.get('*', (req,res) =>{
     res.render('error');
 });

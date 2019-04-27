@@ -23,9 +23,9 @@ hbs.registerHelper('listarCursos', (listado) =>{
                         "<input type='hidden' name='id' value='"+curso._id+"'>";
 
         if(curso.estado == 'disponible')
-            boton = boton + "<button type='submit' class='btn btn-outline-danger' name='estado' value='cerrado'>Cerrado</button>";
+            boton = boton + "<button type='submit' class='btn btn-outline-danger' name='estado' value='cerrado'>Cerrar</button>";
         else
-            boton = boton + "<button type='submit' class='btn btn-outline-success' name='estado' value='disponible'>Disponible</button>";
+            boton = boton + "<button type='submit' class='btn btn-outline-success' name='estado' value='disponible'>Habilitar</button>";
         
         boton = boton + "</form>";
 
@@ -176,6 +176,75 @@ hbs.registerHelper('verCursosInscrito', (listado) =>{
                             "</div>";
         });
     }
+
+    return texto;
+});
+
+hbs.registerHelper('listarAspirantesInscritos', (listaCursos) =>{
+    listaCursos = listaCursos
+    let texto = "";
+
+    listaCursos.forEach(curso => {
+
+        let textoAspirante = "";
+
+        if(curso.aspirantes.length > 0)
+        {
+            textoAspirante = "<table class='table table-striped table-responsive'>"+
+                                "<thead>"+
+                                "<th> Eliminar </th>"+
+                                "<th> Documento </th>"+
+                                "<th> Nombre </th>"+
+                                "<th> Correo </th>"+
+                                "</thead>"+
+                                "</tbody>";
+
+            curso.aspirantes.forEach(aspirante => {
+                textoAspirante = textoAspirante + "<tr>"+
+                                                        "<td>"+
+                                                            "<form action='/eliminarAspiranteCurso' method='POST'>"+
+                                                                "<input type='hidden' name='idCurso' value='"+curso._id+"'>"+
+                                                                "<input type='hidden' name='idAspirante' value='"+aspirante._id+"'>"+
+                                                                "<button type='submit' class='btn btn-danger'>Eliminar</button>"+
+                                                            "</form>"+
+                                                        "</td>" +
+                                                        "<td>"+aspirante.nroDocumento +"</td>" +
+                                                        "<td>"+aspirante.nombre +"</td>" +
+                                                        "<td>"+aspirante.correo +"</td>" +
+                                                    "</tr>";
+            });
+
+            textoAspirante = textoAspirante + "<tbody>"+
+                                            "</table>";
+        }
+        else
+        {
+            textoAspirante = textoAspirante + "<div class='alert alert-warning' role='alert'>" +
+                                                    "<p>No hay aspirantes inscritos a este curso</p>" +
+                                                "</div>";   
+        }
+
+        texto = texto + "<div class='col-md-6'>"+
+                            "<div id='accordion'>"+
+                                "<div class='card'>"+
+                                    "<div class='card-header' id='headingTwo'>"+
+                                        "<h5 class='mb-0'>"+
+                                            "<button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseTwo"+curso._id +"'"+
+                                                "aria-expanded='false' aria-controls='collapseTwo"+curso._id +"'>"+
+                                                "<strong>"+ curso.nombre +"</strong>"+
+                                            "</button>"+
+                                        "</h5>"+
+                                    "</div>"+
+                                    "<div id='collapseTwo"+curso._id +"' class='collapse' aria-labelledby='headingTwo' data-parent='#accordion'>"+
+                                        "<div class='card-body'>"+
+                                            textoAspirante +
+                                        "</div>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>"+
+                        "</div>";
+        
+    });
 
     return texto;
 });

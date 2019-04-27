@@ -29,6 +29,9 @@
                         <li class="nav-item active">
                             <a class="nav-link" href="/vercursosinscritos">Ver cursos inscritos</a>
                         </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/salachat">Sala de chat</a>
+                        </li>
                     {{/if}}
 
                     {{#if sessionCoordinador}}
@@ -39,7 +42,10 @@
                             <a class="nav-link" href="/listarcursos">Ver cursos</a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link" href="#">Ver inscritos</a>
+                            <a class="nav-link" href="/listaraspirantesinscritos">Ver inscritos</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/salachat">Sala de chat</a>
                         </li>
                     {{/if}}
                 </ul>
@@ -52,7 +58,7 @@
                     </form>
                 {{else}} 
                     <form class="orm-inline my-2 my-lg-0" action="/salir" method="GET">
-                        <img src="data:image/png;base64,{{avatar}}" alt="fotoPerfil" style="width: 30px; height: auto">
+                        <img src="data:image/png;base64,{{avatar}}" alt="fotoPerfil" style="width: 30px; height: auto" class="rounded-circle">
                         <span>{{nombre}}</span>
                         <button type="submit" class="btn btn-outline-danger my-2 my-sm-0">Salir</button>
                     </form>

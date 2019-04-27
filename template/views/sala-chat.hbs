@@ -1,0 +1,29 @@
+{{>header}}
+<div class="container mt-2">
+    <div class="row">
+        <div class="col">
+            <h2>Sala de chat</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form id="formulario">
+                <div class="row">
+                    <div class="form-group col">
+                        <input type="hidden" id="usuario" value="{{nombre}}">
+                        <textarea class="form-control" rows="4" cols="50" id="texto" name="text" form="usrform" placeholder="Ingrese su mensaje aqui..."></textarea>
+                    </div>		
+                </div> 
+                <div class="row d-flex justify-content-center">
+                    <button type="submit" class="btn btn-outline-primary">Enviar</button>   
+                </div>		
+            </form>   
+            <div id="chat" class="container"></div>
+        </div>
+    </div>
+    <div class="row">
+    </div>
+</div>
+<script src="socket.io/socket.io.js"></script>
+<script src="js/socket.js"></script>
+{{>footer}}

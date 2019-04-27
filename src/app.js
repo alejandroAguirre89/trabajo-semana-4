@@ -7,6 +7,9 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 require('./helpers/helpers');
 const session = require('express-session')
+//sockets
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
 //paths
 const dirPublic = path.join(__dirname, '../public')
@@ -47,6 +50,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //routes
 app.use(require('./routes/index'));
 
+//conexión bd
 mongoose.connect(process.env.URLDB, {useNewUrlParser: true}, (err, result)=> {
     if(err)
         return console.log(err);
@@ -54,6 +58,50 @@ mongoose.connect(process.env.URLDB, {useNewUrlParser: true}, (err, result)=> {
     console.log('conectado');
 });
 
-app.listen(process.env.PORT, () => {
+//sockets
+const { Usuarios } = require('./clases/usuarios');
+const usuarios = new Usuarios();
+
+io.on('connection', client => {
+
+    /*emite a todos los usuarios cuando un usuario
+    se conecta a la sala de chat*/
+    client.on('usuarioNuevo', (usuario) =>{
+		let listado = usuarios.agregarUsuario(client.id, usuario)
+		console.log(listado)
+		let texto = `Se ha conectado ${usuario}`
+		io.emit('nuevoUsuario', texto )
+	})
+
+    /*emite a todos los usuarios cuando un usuario
+    se desconecta a la sala de chat*/
+	client.on('disconnect',()=>{
+        let usuarioBorrado = usuarios.borrarUsuario(client.id)
+        let texto = ''
+
+        if(usuarioBorrado)
+            texto = `Se ha desconectado ${usuarioBorrado.nombre}`
+        
+		io.emit('usuarioDesconectado', texto)
+	})
+
+    /*emite a todos los usuarios cuando un usuario
+    envia un mensaje*/
+	client.on("texto", (text, callback) =>{
+        let usuario = usuarios.getUsuario(client.id)
+        
+        let nombreUsuario = usuario.nombre
+		let texto = `${nombreUsuario} : ${text}`
+		
+		io.emit("texto", ({
+            nombreUsuario: nombreUsuario,
+            texto: texto
+        }))
+		callback()
+    })
+});
+
+//puerto
+server.listen(process.env.PORT, () => {
     console.log('Escuchando puerto '+ process.env.PORT);
 })
