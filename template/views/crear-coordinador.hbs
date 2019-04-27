@@ -1,0 +1,55 @@
+{{>header}}
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col">
+                {{#if respuesta}}
+                    <div class="alert alert-success" role="alert">
+                        <p>Usuario con perfil de coordinador creado exitosamente</p>
+                    </div>
+                {{else}}
+
+                {{/if}}
+            </div>
+        </div>
+        <div class="ror">
+            <h2>Formulario para crear un usuario con perfil de coordinador</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form action="/registrocoordinador" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="nroDocumento">Documento</label>
+                            <input type="text" class="form-control" id="nroDocumento" name="nroDocumento" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="correo">Correo</label>
+                            <input type="email" class="form-control" id="correo" name="correo" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="contrasena">Contraseña</label>
+                            <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="custom-file">
+                                <input type="file" name="fotoPerfil" class="custom-file-input" accept="image/x-png,image/gif,image/jpeg">
+                                <label class="custom-file-label" for="customFile">Subir foto de perfil</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-outline-primary">Crear usuario</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{{>footer}}

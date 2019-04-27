@@ -64,12 +64,18 @@ app.get('/', (req, res) => {
 var upload = multer({})
 
 app.post('/registro', upload.single('fotoPerfil'), (req,res) => {
+
+    let archivo = null
+
+    if(req.file != null)
+        archivo = req.file.buffer
+
     let aspirante = new Aspirante({
         nroDocumento: req.body.nroDocumento,
         nombre: req.body.nombre,
         correo: req.body.correo,
         contrasena: bcrypt.hashSync(req.body.contrasena, 10),
-        avatar: req.file.buffer,
+        avatar: archivo,
         rol: 'aspirante'
     })
     
@@ -86,8 +92,11 @@ app.post('/registro', upload.single('fotoPerfil'), (req,res) => {
         req.session.nombre  = result.nombre
         req.session.sessionActiva        = true
         req.session.sessionAspirante     = true
-        req.session.sessionCoordinador   = false,
-        avatar = result.avatar.toString('base64')
+        req.session.sessionCoordinador   = false
+
+        let avatar = ''
+        if(result.avatar)
+            avatar = result.avatar.toString('base64')
 
         res.render('index', {
             tituloPagina: 'Inicio',
@@ -475,6 +484,45 @@ app.get('/salachat', (req, res) => {
             tituloPagina: 'Sala de chat',
         };
     }
+});
+
+app.get('/registrocoordinador', (req, res) => {
+    if(req.session.sessionActiva)
+    {
+        res.render('crear-coordinador', {
+            tituloPagina: 'Registrar coordinador',
+            respuesta: false
+        });
+    }
+    else
+        return res.redirect('/');
+});
+
+app.post('/registrocoordinador', upload.single('fotoPerfil'), (req,res) => {
+
+    let archivo = null
+
+    if(req.file != null)
+        archivo = req.file.buffer
+
+    let coordinador = new Aspirante({
+        nroDocumento: req.body.nroDocumento,
+        nombre: req.body.nombre,
+        correo: req.body.correo,
+        contrasena: bcrypt.hashSync(req.body.contrasena, 10),
+        avatar: archivo,
+        rol: 'coordinador'
+    })
+    
+    coordinador.save((err, result) =>{
+        if(err)
+            console.log(err);
+
+        res.render('crear-coordinador', {
+            tituloPagina: 'Registrar coordinador',
+            respuesta: true
+        });
+    })
 });
   
 app.get('*', (req,res) =>{
