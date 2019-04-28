@@ -4,6 +4,7 @@
   "description": "Unidad de la semana 3",
   "main": "src/app.js",
   "scripts": {
+    "start": "node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Alejandro Aguirre jn.alejandro77@gmail.com",
